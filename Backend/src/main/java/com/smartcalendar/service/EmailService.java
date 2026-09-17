@@ -34,12 +34,18 @@ public class EmailService {
     @Value("${smartcalendar.resend.fromEmail:SmartCal <onboarding@resend.dev>}")
     private String resendFromEmail;
 
+    @Value("${smartcalendar.brevo.apiKey:${BREVO_API_KEY:}}")
+    private String brevoApiKey;
+
+    @Value("${smartcalendar.brevo.senderEmail:${BREVO_SENDER_EMAIL:gskgm2006@gmail.com}}")
+    private String brevoSenderEmail;
+
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
     /**
-     * Send real-time OTP via Resend HTTPS API (Port 443) or Gmail SMTP
+     * Send real-time OTP via Brevo / Resend HTTPS API (Port 443) or Gmail SMTP
      * @param toEmail Recipient email address
      * @param username Username of recipient
      * @param otp 6-digit numeric verification code
@@ -48,7 +54,15 @@ public class EmailService {
     public boolean sendOtpEmail(String toEmail, String username, String otp) {
         String htmlBody = buildHtmlTemplate(username, otp);
 
-        // 1. Try Resend HTTPS API (Port 443 - 100% immune to cloud SMTP port blocking)
+        // 1. Try Brevo HTTPS API (Port 443 - free 300 emails/day to ANY recipient without domain restriction)
+        if (brevoApiKey != null && !brevoApiKey.isBlank()) {
+            boolean sentViaBrevo = sendViaBrevoHttp(toEmail, username, otp, htmlBody);
+            if (sentViaBrevo) {
+                return true;
+            }
+        }
+
+        // 2. Try Resend HTTPS API (Port 443)
         if (resendApiKey != null && !resendApiKey.isBlank()) {
             boolean sentViaResend = sendViaResendHttp(toEmail, username, otp, htmlBody);
             if (sentViaResend) {
@@ -56,7 +70,7 @@ public class EmailService {
             }
         }
 
-        // 2. Fallback to JavaMail SMTP
+        // 3. Fallback to JavaMail SMTP
         if (senderEmail != null && !senderEmail.isBlank()) {
             try {
                 log.info("Attempting Gmail SMTP delivery to {}", toEmail);
@@ -78,6 +92,36 @@ public class EmailService {
             }
         }
 
+        return false;
+    }
+
+    private boolean sendViaBrevoHttp(String toEmail, String username, String otp, String htmlBody) {
+        try {
+            log.info("Sending OTP email to {} via Brevo HTTPS API", toEmail);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("api-key", brevoApiKey.trim());
+
+            Map<String, Object> senderMap = Map.of("name", "SmartCal AI", "email", brevoSenderEmail.trim());
+            Map<String, Object> recipientMap = Map.of("email", toEmail.trim(), "name", username != null ? username : "User");
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("sender", senderMap);
+            payload.put("to", List.of(recipientMap));
+            payload.put("subject", otp + " is your SmartCal Verification Code");
+            payload.put("htmlContent", htmlBody);
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity("https://api.brevo.com/v3/smtp/email", request, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("Brevo HTTPS email successfully sent to {}", toEmail);
+                return true;
+            }
+        } catch (Exception e) {
+            log.error("Failed to send via Brevo API: {}", e.getMessage());
+        }
         return false;
     }
 
