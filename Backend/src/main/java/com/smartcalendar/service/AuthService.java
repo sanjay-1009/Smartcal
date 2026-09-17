@@ -55,49 +55,33 @@ public class AuthService {
             throw new BadRequestException("Password and confirm password do not match");
         }
 
-        String username = request.getUsername() != null ? request.getUsername().trim() : "";
-        String contact = request.getMobileNumber() != null ? request.getMobileNumber().trim() : "";
-
-        if (username.isEmpty() || contact.isEmpty()) {
-            throw new BadRequestException("Username and Email/Phone are required");
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new BadRequestException("Username '" + request.getUsername() + "' is already taken");
         }
 
-        // Check if user already exists
-        Optional<User> existingUserOpt = userRepository.findByUsernameOrMobileNumber(username, contact);
+        if (userRepository.existsByMobileNumber(request.getMobileNumber())) {
+            throw new BadRequestException("Identifier '" + request.getMobileNumber() + "' is already registered");
+        }
 
         String otp = generateOtp();
         LocalDateTime expiry = LocalDateTime.now().plusMinutes(10);
-        User user;
 
-        if (existingUserOpt.isPresent()) {
-            User existing = existingUserOpt.get();
-            if (Boolean.TRUE.equals(existing.getIsVerified())) {
-                throw new BadRequestException("An account with this username or email is already registered. Please sign in.");
-            }
-            // Update the unverified user with new credentials and a new OTP
-            existing.setUsername(username);
-            existing.setMobileNumber(contact);
-            existing.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-            existing.setOtpCode(otp);
-            existing.setOtpExpiry(expiry);
-            user = userRepository.save(existing);
-        } else {
-            user = User.builder()
-                    .username(username)
-                    .mobileNumber(contact)
-                    .passwordHash(passwordEncoder.encode(request.getPassword()))
-                    .isVerified(false)
-                    .otpCode(otp)
-                    .otpExpiry(expiry)
-                    .role("ROLE_USER")
-                    .build();
-            user = userRepository.save(user);
-        }
+        User user = User.builder()
+                .username(request.getUsername().trim())
+                .mobileNumber(request.getMobileNumber().trim())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .isVerified(false)
+                .otpCode(otp)
+                .otpExpiry(expiry)
+                .role("ROLE_USER")
+                .build();
+
+        userRepository.save(user);
 
         // Dispatch real-time OTP via Email or SMS
         boolean sent = dispatchOtp(user, otp);
 
-        log.info("USER REGISTRATION: Username: {}, Contact: {}, OTP: {}, Sent: {}", user.getUsername(), user.getMobileNumber(), otp, sent);
+        log.info("USER REGISTERED: Username: {}, Contact: {}, OTP: {}, Sent: {}", user.getUsername(), user.getMobileNumber(), otp, sent);
         
         if (sent) {
             String channel = user.getMobileNumber().contains("@") ? "email inbox (" + user.getMobileNumber() + ")" : "mobile phone (" + user.getMobileNumber() + ")";
