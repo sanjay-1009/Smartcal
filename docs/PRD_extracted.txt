@@ -1,0 +1,613 @@
+SMART CALENDAR
+
+Product Requirements Document (PRD)
+
+Project Name: Smart CalendarProject Type: AI-Powered Intelligent Calendar and Event Management SystemVersion: 1.0Document Status: Initial Product Specification
+
+1. Product Overview
+
+Smart Calendar is an AI-powered calendar application designed to help students automatically identify, organize, and manage important events and deadlines.
+
+Students frequently receive event information through websites, registration pages, PDFs, posters, screenshots, messages, and other sources. Important dates such as registration deadlines, submission deadlines, event dates, examination dates, workshops, and hackathons can easily be forgotten.
+
+Traditional calendar applications require users to manually identify the relevant information and create calendar events.
+
+Smart Calendar addresses this problem by allowing users to provide an event source in the form of a URL, PDF, image, or text. The system extracts relevant event information using AI, presents the extracted information to the user for confirmation, and then adds the selected information to the user's calendar.
+
+The system also detects scheduling conflicts and provides reminders for upcoming events and deadlines.
+
+2. Problem Statement
+
+Students participate in multiple academic and extracurricular activities such as:
+
+Hackathons
+
+Workshops
+
+Competitions
+
+Seminars
+
+Internships
+
+Examinations
+
+Project submissions
+
+College events
+
+Webinars
+
+Information about these events is often distributed across multiple sources.
+
+The current process requires students to:
+
+Find the event information.
+
+Identify important dates.
+
+Manually create calendar entries.
+
+Remember deadlines.
+
+Check for conflicts with existing schedules.
+
+This manual process can result in missed deadlines, forgotten events, duplicate entries, and scheduling conflicts.
+
+3. Product Goal
+
+The goal of Smart Calendar is to reduce manual calendar management by automatically converting unstructured event information into structured, user-approved calendar events.
+
+Primary Goal
+
+Allow a student to provide event information through a URL, PDF, image, or text and automatically extract the important information required to create a calendar event.
+
+4. Target Users
+
+Primary Users
+
+Students
+
+Students who participate in:
+
+Hackathons
+
+Competitions
+
+Workshops
+
+Conferences
+
+Internships
+
+Academic activities
+
+College events
+
+Secondary Users
+
+The system can later be extended to:
+
+Faculty
+
+Researchers
+
+Working professionals
+
+Event organizers
+
+Student clubs
+
+5. User Personas
+
+Persona 1 — College Student
+
+A student registers for several hackathons and workshops but receives event details through different websites and posters.
+
+Problem
+
+The student forgets registration and submission deadlines.
+
+Smart Calendar Solution
+
+The student provides the event URL or uploads the poster.
+
+The system extracts:
+
+Event name
+
+Date
+
+Time
+
+Location
+
+Registration deadline
+
+Submission deadline
+
+Coordinator information
+
+Source URL
+
+The student confirms the information and adds it to the calendar.
+
+Persona 2 — Active Hackathon Participant
+
+A student participates in multiple hackathons simultaneously.
+
+Problem
+
+Several deadlines may occur on the same day.
+
+Smart Calendar Solution
+
+The system identifies overlapping events and alerts the student.
+
+6. Product Scope
+
+In Scope
+
+Authentication
+
+User registration
+
+Username
+
+Password
+
+Confirm password
+
+Mobile number
+
+OTP verification
+
+Login using username or mobile number
+
+Password authentication
+
+Logout
+
+Calendar
+
+Monthly calendar
+
+Weekly calendar
+
+Daily calendar
+
+Event creation
+
+Event editing
+
+Event deletion
+
+Event viewing
+
+AI Event Extraction
+
+Users can provide:
+
+Website URL
+
+PDF
+
+Image/photo
+
+Plain text
+
+The system extracts relevant event information.
+
+Extracted Information
+
+Depending on availability:
+
+Event name
+
+Description
+
+Event date
+
+Start time
+
+End time
+
+Registration deadline
+
+Submission deadline
+
+Location
+
+Coordinator name
+
+Coordinator phone number
+
+Source URL
+
+User Confirmation
+
+The user can select which extracted fields should be saved.
+
+Conflict Detection
+
+The system checks new events against existing events.
+
+Notifications
+
+The system provides reminders for upcoming events and deadlines.
+
+Source Redirection
+
+Clicking an event can redirect the user to the original source website.
+
+7. Out of Scope — Initial Version
+
+The following features are not required for the first version:
+
+Google Calendar synchronization
+
+Microsoft Outlook synchronization
+
+Automatic email reading
+
+WhatsApp integration
+
+Automatic registration for events
+
+Automatic event enrollment
+
+Payment processing
+
+Advanced recommendation systems
+
+Multi-user organizational calendars
+
+These can be considered future enhancements.
+
+8. User Workflow
+
+User
+
+ ↓
+
+Sign Up / Login
+
+ ↓
+
+Dashboard
+
+ ↓
+
+Calendar
+
+ ↓
+
+Add Event
+
+ ↓
+
+Choose Input
+
+ ├── URL
+
+ ├── PDF
+
+ ├── Image
+
+ └── Text
+
+ ↓
+
+Data Extraction
+
+ ↓
+
+AI Processing
+
+ ↓
+
+Extract Event Information
+
+ ↓
+
+User Reviews Information
+
+ ↓
+
+User Selects Fields
+
+ ↓
+
+Conflict Detection
+
+ ↓
+
+ ┌───────────────┐
+
+ │ Conflict?     │
+
+ └───────┬───────┘
+
+         │
+
+    Yes  │  No
+
+         │
+
+         ▼
+
+      Alert
+
+         │
+
+         ▼
+
+ User Decision
+
+         │
+
+         ▼
+
+    Save Event
+
+         │
+
+         ▼
+
+      Calendar
+
+         │
+
+         ▼
+
+    Notifications
+
+9. Functional Requirements
+
+FR-01 — User Registration
+
+The system shall allow new users to create an account.
+
+Required information:
+
+Username
+
+Password
+
+Confirm password
+
+Mobile number
+
+The system shall verify the mobile number using OTP.
+
+FR-02 — User Login
+
+Existing users shall be able to log in using:
+
+Username + password
+
+Mobile number + password
+
+FR-03 — Calendar Management
+
+The system shall provide a personal calendar for each authenticated user.
+
+Users shall be able to:
+
+View events
+
+Add events
+
+Edit events
+
+Delete events
+
+Search events
+
+View event details
+
+FR-04 — URL Event Extraction
+
+The user shall be able to provide an event webpage URL.
+
+The system shall:
+
+Retrieve the webpage.
+
+Extract relevant text.
+
+Send the text to the AI extraction service.
+
+Generate structured event information.
+
+Display the result to the user.
+
+FR-05 — PDF Event Extraction
+
+The user shall be able to upload a PDF.
+
+The system shall:
+
+Extract text from the PDF.
+
+Process the extracted text using AI.
+
+Identify relevant event information.
+
+Display extracted information for confirmation.
+
+FR-06 — Image Event Extraction
+
+The user shall be able to upload an event poster or image.
+
+The system shall:
+
+Process the image using OCR.
+
+Extract text.
+
+Send the extracted text to the AI service.
+
+Identify event information.
+
+FR-07 — Text Event Extraction
+
+The user shall be able to paste event information directly into the application.
+
+The AI shall identify relevant event fields.
+
+FR-08 — User Confirmation
+
+The system shall display AI-extracted information before saving.
+
+Users shall be able to select or deselect fields.
+
+Only confirmed information shall be stored.
+
+FR-09 — Conflict Detection
+
+The system shall compare a new event against existing events.
+
+If overlapping schedules are detected, the system shall notify the user.
+
+Example:
+
+Existing Event:
+
+10:00 AM – 12:00 PM
+
+New Event:
+
+11:00 AM – 1:00 PM
+
+Result:
+
+Schedule Conflict
+
+FR-10 — Notifications
+
+The system shall notify users about upcoming:
+
+Events
+
+Registration deadlines
+
+Submission deadlines
+
+Users shall be able to configure reminder intervals.
+
+FR-11 — Source Redirection
+
+Each event may contain its original source URL.
+
+When the user clicks the source link, the system shall open the original webpage.
+
+10. Non-Functional Requirements
+
+Performance
+
+Normal API requests should respond quickly under normal load.
+
+Calendar events should load without noticeable delay.
+
+AI processing should provide feedback while processing.
+
+Security
+
+Passwords must never be stored as plain text.
+
+Passwords must be securely hashed.
+
+Authentication should use secure tokens.
+
+Users must only access their own events.
+
+Uploaded files must be validated.
+
+Reliability
+
+AI failures should not delete existing events.
+
+Invalid URLs should produce meaningful errors.
+
+Invalid files should be rejected safely.
+
+Usability
+
+The application should:
+
+Have a simple interface.
+
+Require minimal manual data entry.
+
+Clearly display AI-extracted information.
+
+Clearly indicate conflicts.
+
+Provide easy access to upcoming deadlines.
+
+11. Success Criteria
+
+The initial product will be considered successful when a user can:
+
+Register.
+
+Login.
+
+Open their calendar.
+
+Submit a URL/PDF/image/text.
+
+Receive extracted event information.
+
+Select information to save.
+
+Add the event to the calendar.
+
+Detect conflicts with existing events.
+
+Receive reminders.
+
+Open the original event website.
+
+12. Future Enhancements
+
+Possible future versions may include:
+
+Google Calendar integration
+
+Outlook Calendar integration
+
+Email-based event detection
+
+Browser extension
+
+Mobile application
+
+AI-generated event summaries
+
+Automatic deadline prioritization
+
+Recurring events
+
+Shared calendars
+
+Student club calendars
+
+Voice-based event creation
+
+Personalized reminder timing
+
+Event recommendation system
+
+13. Product Vision
+
+Smart Calendar aims to evolve from a conventional calendar into an intelligent personal event-management assistant.
+
+Instead of asking:
+
+"What should I add to my calendar?"
+
+the system should allow users to simply provide information and let the AI identify what is relevant.
+
+The user remains in control of what information is finally stored.

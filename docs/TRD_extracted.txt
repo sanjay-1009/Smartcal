@@ -1,0 +1,1293 @@
+SMART CALENDAR
+
+Technical Requirements Document (TRD)
+
+Project Name: Smart CalendarVersion: 1.0Architecture: Client–Server REST ArchitectureBackend: Java + Spring BootFrontend: React + ViteDatabase: MySQL
+
+1. Technical Overview
+
+Smart Calendar will be developed as a web-based client-server application.
+
+The frontend will provide the user interface and communicate with the backend through REST APIs.
+
+The backend will handle:
+
+Authentication
+
+User management
+
+Event management
+
+AI processing
+
+Web scraping
+
+PDF processing
+
+OCR
+
+Conflict detection
+
+Notification scheduling
+
+MySQL will provide persistent storage.
+
+2. Technology Stack
+
+Component
+
+Technology
+
+Frontend
+
+React
+
+Build Tool
+
+Vite
+
+Styling
+
+Tailwind CSS
+
+HTTP Client
+
+Axios
+
+Calendar UI
+
+FullCalendar
+
+Backend
+
+Java
+
+Framework
+
+Spring Boot
+
+API
+
+REST
+
+ORM
+
+Spring Data JPA / Hibernate
+
+Database
+
+MySQL
+
+Authentication
+
+Spring Security + JWT
+
+Password Hashing
+
+BCrypt
+
+Web Scraping
+
+Jsoup
+
+PDF Processing
+
+Apache PDFBox
+
+OCR
+
+Tesseract OCR
+
+AI
+
+Groq / Ollama
+
+Scheduling
+
+Spring Scheduler
+
+Build Tool
+
+Maven
+
+Testing
+
+JUnit + Postman
+
+Version Control
+
+Git + GitHub
+
+3. System Architecture
+
+                     USER
+
+                       |
+
+                       v
+
+              ┌─────────────────┐
+
+              │ React Frontend  │
+
+              └────────┬────────┘
+
+                       |
+
+                    REST API
+
+                       |
+
+                       v
+
+              ┌─────────────────┐
+
+              │ Spring Boot API │
+
+              └────────┬────────┘
+
+                       |
+
+       ┌───────────────┼────────────────┐
+
+       │               │                │
+
+       v               v                v
+
+ Authentication    Event Service    AI Service
+
+       │               │                │
+
+       │               │        ┌───────┼────────┐
+
+       │               │        │       │        │
+
+       │               │      Jsoup   PDFBox   OCR
+
+       │               │        │       │        │
+
+       │               │        └───────┼────────┘
+
+       │               │                │
+
+       │               │                v
+
+       │               │          AI Extraction
+
+       │               │                │
+
+       └───────────────┼────────────────┘
+
+                       |
+
+                       v
+
+                   MySQL
+
+4. Frontend Architecture
+
+Recommended structure:
+
+frontend/
+
+│
+
+├── src/
+
+│   ├── components/
+
+│   ├── pages/
+
+│   ├── services/
+
+│   ├── hooks/
+
+│   ├── context/
+
+│   ├── utils/
+
+│   ├── assets/
+
+│   └── App.jsx
+
+│
+
+├── public/
+
+├── package.json
+
+└── vite.config.js
+
+5. Frontend Pages
+
+Authentication
+
+/login
+
+/signup
+
+/verify-otp
+
+Main Application
+
+/dashboard
+
+/calendar
+
+/events
+
+/events/:id
+
+/add-event
+
+/notifications
+
+/profile
+
+6. Backend Architecture
+
+Recommended package structure:
+
+backend/
+
+└── src/main/java/com/smartcalendar/
+
+    │
+
+    ├── controller/
+
+    │
+
+    ├── service/
+
+    │
+
+    ├── repository/
+
+    │
+
+    ├── entity/
+
+    │
+
+    ├── dto/
+
+    │
+
+    ├── security/
+
+    │
+
+    ├── ai/
+
+    │
+
+    ├── scraper/
+
+    │
+
+    ├── ocr/
+
+    │
+
+    ├── exception/
+
+    │
+
+    └── config/
+
+7. Backend Responsibilities
+
+Controller Layer
+
+Handles HTTP requests.
+
+Examples:
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+POST /api/events
+
+GET  /api/events
+
+PUT  /api/events/{id}
+
+DELETE /api/events/{id}
+
+POST /api/extract/text
+
+POST /api/extract/url
+
+POST /api/extract/pdf
+
+POST /api/extract/image
+
+8. Service Layer
+
+Main services:
+
+AuthService
+
+UserService
+
+EventService
+
+AIExtractionService
+
+WebScrapingService
+
+PdfExtractionService
+
+OcrService
+
+ConflictDetectionService
+
+NotificationService
+
+Each service should have a clearly defined responsibility.
+
+9. Database Design
+
+Users
+
+users
+
+------------------
+
+id
+
+username
+
+password_hash
+
+mobile_number
+
+is_verified
+
+created_at
+
+updated_at
+
+Events
+
+events
+
+------------------
+
+id
+
+user_id
+
+event_name
+
+description
+
+start_date
+
+start_time
+
+end_date
+
+end_time
+
+location
+
+coordinator_name
+
+coordinator_phone
+
+source_url
+
+created_at
+
+updated_at
+
+Notifications
+
+notifications
+
+------------------
+
+id
+
+user_id
+
+event_id
+
+notification_time
+
+notification_type
+
+status
+
+created_at
+
+Event Sources
+
+event_sources
+
+------------------
+
+id
+
+event_id
+
+source_type
+
+source_url
+
+original_content
+
+created_at
+
+10. Database Relationships
+
+USER
+
+ │
+
+ │ 1
+
+ │
+
+ │ N
+
+ ▼
+
+EVENT
+
+ │
+
+ ├─────────── N
+
+ │
+
+ ▼
+
+NOTIFICATION
+
+EVENT
+
+ │
+
+ └─────────── N
+
+             │
+
+             ▼
+
+        EVENT_SOURCE
+
+A user can have multiple events.
+
+An event can have multiple notifications and source records.
+
+11. AI Processing Architecture
+
+The system should normalize different input types into text before AI processing.
+
+                    INPUT
+
+                      |
+
+       ┌──────────────┼──────────────┐
+
+       │              │              │
+
+      URL            PDF           IMAGE
+
+       │              │              │
+
+     Jsoup          PDFBox        OCR
+
+       │              │              │
+
+       └──────────────┼──────────────┘
+
+                      │
+
+                      ▼
+
+                EXTRACTED TEXT
+
+                      │
+
+                      ▼
+
+                AI PROCESSOR
+
+                      │
+
+                      ▼
+
+              STRUCTURED JSON
+
+                      │
+
+                      ▼
+
+             VALIDATION LAYER
+
+                      │
+
+                      ▼
+
+              USER CONFIRMATION
+
+                      │
+
+                      ▼
+
+                  EVENT
+
+12. AI Output Schema
+
+The AI should return structured information instead of free-form text.
+
+Example conceptual schema:
+
+Event
+
+ ├── eventName
+
+ ├── description
+
+ ├── startDate
+
+ ├── startTime
+
+ ├── endDate
+
+ ├── endTime
+
+ ├── registrationDeadline
+
+ ├── submissionDeadline
+
+ ├── location
+
+ ├── coordinatorName
+
+ ├── coordinatorPhone
+
+ └── sourceUrl
+
+The backend should validate AI output before saving it.
+
+13. URL Processing
+
+User
+
+ ↓
+
+URL
+
+ ↓
+
+Spring Boot
+
+ ↓
+
+WebScrapingService
+
+ ↓
+
+Jsoup
+
+ ↓
+
+HTML
+
+ ↓
+
+Text Cleaning
+
+ ↓
+
+AIExtractionService
+
+ ↓
+
+Structured Event
+
+The scraper should remove irrelevant content where possible, such as navigation menus and unrelated page elements.
+
+14. PDF Processing
+
+PDF Upload
+
+ ↓
+
+File Validation
+
+ ↓
+
+PDFBox
+
+ ↓
+
+Extract Text
+
+ ↓
+
+AI
+
+ ↓
+
+Structured Event
+
+If the PDF does not contain machine-readable text, the system may route it through OCR.
+
+15. Image Processing
+
+Image Upload
+
+ ↓
+
+File Validation
+
+ ↓
+
+Tesseract OCR
+
+ ↓
+
+Extracted Text
+
+ ↓
+
+AI
+
+ ↓
+
+Structured Event
+
+Supported image types should initially include common formats such as:
+
+JPG
+
+JPEG
+
+PNG
+
+16. User Confirmation Pipeline
+
+AI output should not immediately be inserted into the database.
+
+AI
+
+ ↓
+
+Extracted Information
+
+ ↓
+
+Backend Validation
+
+ ↓
+
+Frontend Preview
+
+ ↓
+
+User Selection
+
+ ↓
+
+Final Event Data
+
+ ↓
+
+Conflict Detection
+
+ ↓
+
+Database
+
+This prevents incorrect AI-generated information from being automatically saved.
+
+17. Conflict Detection
+
+The conflict detection module will compare the new event against existing events belonging to the same user.
+
+For two events:
+
+Event A:
+
+StartA
+
+EndA
+
+Event B:
+
+StartB
+
+EndB
+
+An overlap exists when:
+
+StartA < EndB
+
+AND
+
+StartB < EndA
+
+The system should check:
+
+Same date
+
+Overlapping time
+
+Existing event status
+
+For events without a specific time, the system can issue a date-level warning instead of claiming a time conflict.
+
+18. Data Structures and Algorithms
+
+The project will use DSA where it provides a practical benefit.
+
+HashMap
+
+Conceptual structure:
+
+HashMap<Date, List<Event>>
+
+Purpose:
+
+Fast date-based event grouping
+
+Calendar lookup
+
+Conflict-check preparation
+
+Priority Queue
+
+Purpose:
+
+Upcoming deadlines
+
+Reminder prioritization
+
+Events can be ordered by their next important date.
+
+Nearest deadline
+
+       ↓
+
+Highest priority
+
+       ↓
+
+Later deadline
+
+Queue
+
+Purpose:
+
+Notification processing
+
+Notification 1
+
+      ↓
+
+Notification 2
+
+      ↓
+
+Notification 3
+
+Notifications can be processed in order.
+
+Sorting
+
+Events can be sorted by:
+
+Date
+
+Time
+
+Deadline
+
+Priority
+
+19. Authentication Architecture
+
+React
+
+ ↓
+
+Login Request
+
+ ↓
+
+AuthController
+
+ ↓
+
+AuthService
+
+ ↓
+
+UserRepository
+
+ ↓
+
+Password Verification
+
+ ↓
+
+JWT Generation
+
+ ↓
+
+React
+
+Passwords should be hashed using BCrypt.
+
+JWT should be used to authenticate subsequent API requests.
+
+20. API Security
+
+Authenticated endpoints should require a valid JWT.
+
+Example:
+
+GET /api/events
+
+The backend should determine the user from the authenticated token rather than trusting a user ID supplied by the frontend.
+
+This prevents users from requesting another user's events.
+
+21. Notification Architecture
+
+A scheduler will periodically check upcoming events.
+
+Spring Scheduler
+
+       ↓
+
+Check Upcoming Events
+
+       ↓
+
+Priority Queue
+
+       ↓
+
+Notification Service
+
+       ↓
+
+Create Notification
+
+       ↓
+
+Frontend
+
+Initial version:
+
+In-app notifications
+
+Future versions:
+
+Email
+
+Push notifications
+
+SMS
+
+22. Error Handling
+
+The backend should provide meaningful errors.
+
+Examples:
+
+400 Bad Request
+
+Invalid event data
+
+401 Unauthorized
+
+Invalid credentials
+
+403 Forbidden
+
+Access denied
+
+404 Not Found
+
+Event not found
+
+413 Payload Too Large
+
+Uploaded file exceeds limit
+
+422 Unprocessable Entity
+
+Unable to extract event information
+
+500 Internal Server Error
+
+Unexpected server error
+
+23. File Upload Security
+
+Uploaded files should be:
+
+Size limited
+
+Type validated
+
+Processed safely
+
+Stored only when necessary
+
+Given unique server-side identifiers
+
+The application should not trust the filename or MIME type alone.
+
+24. AI Failure Handling
+
+AI extraction may fail or produce incomplete information.
+
+The system should support:
+
+AI Extraction
+
+      ↓
+
+Confidence / Validation
+
+      ↓
+
+ ┌────┴────┐
+
+ │         │
+
+Valid    Incomplete
+
+ │         │
+
+ ▼         ▼
+
+Preview   Ask user
+
+          to enter missing data
+
+The user should be able to manually correct extracted information.
+
+25. Development Environment
+
+Frontend
+
+Node.js
+
+npm
+
+React
+
+Vite
+
+Backend
+
+Java
+
+Maven
+
+Spring Boot
+
+Database
+
+MySQL
+
+Development Tools
+
+Eclipse / IntelliJ IDEA
+
+VS Code
+
+MySQL Workbench
+
+Postman
+
+Git
+
+GitHub
+
+26. Testing Strategy
+
+Frontend
+
+Test:
+
+Login
+
+Signup
+
+Calendar rendering
+
+Event creation
+
+Event editing
+
+Event deletion
+
+File upload
+
+AI result confirmation
+
+Backend
+
+Test:
+
+Authentication
+
+User authorization
+
+Event CRUD
+
+Conflict detection
+
+AI response validation
+
+File processing
+
+Notification scheduling
+
+Integration Testing
+
+Test complete flows:
+
+URL → Scraping → AI → Confirmation → Calendar
+
+PDF → Extraction → AI → Confirmation → Calendar
+
+Image → OCR → AI → Confirmation → Calendar
+
+27. Development Phases
+
+Phase 1 — Foundation
+
+Create frontend
+
+Create backend
+
+Configure MySQL
+
+Connect backend to database
+
+Phase 2 — Authentication
+
+User registration
+
+Login
+
+Password hashing
+
+JWT
+
+OTP
+
+Phase 3 — Calendar
+
+Event entity
+
+Event CRUD
+
+Calendar UI
+
+Event details
+
+Phase 4 — AI Text Extraction
+
+Text input
+
+AI integration
+
+Structured JSON
+
+User confirmation
+
+Phase 5 — URL Extraction
+
+URL input
+
+Jsoup
+
+Content extraction
+
+AI processing
+
+Phase 6 — PDF Extraction
+
+File upload
+
+PDFBox
+
+AI processing
+
+Phase 7 — Image Extraction
+
+Image upload
+
+OCR
+
+AI processing
+
+Phase 8 — Intelligent Scheduling
+
+Conflict detection
+
+HashMap
+
+Priority Queue
+
+Notification Queue
+
+Phase 9 — Notifications
+
+Reminder scheduling
+
+In-app notifications
+
+Notification management
+
+Phase 10 — Testing and Deployment
+
+Security testing
+
+API testing
+
+Integration testing
+
+Performance testing
+
+Deployment
+
+28. Deployment Architecture
+
+Initial development:
+
+React
+
+localhost:5173
+
+Spring Boot
+
+localhost:8080
+
+MySQL
+
+localhost:3306
+
+Production:
+
+User
+
+ ↓
+
+Frontend Hosting
+
+ ↓
+
+Spring Boot Backend
+
+ ↓
+
+MySQL Database
+
+ ↓
+
+AI Provider
+
+29. Technical Success Criteria
+
+The system should successfully demonstrate:
+
+Authentication
+
+User can register, verify, login, and access a personal calendar.
+
+AI
+
+The system can extract relevant event information from at least:
+
+Text
+
+URL
+
+PDF
+
+Image
+
+Calendar
+
+Extracted information can be converted into a calendar event.
+
+DSA
+
+The system demonstrates practical use of:
+
+HashMap
+
+Priority Queue
+
+Queue
+
+Sorting
+
+Interval conflict detection
+
+Notifications
+
+The system can identify upcoming deadlines and generate reminders.
+
+Security
+
+Users cannot access another user's events.
+
+30. Final Technical Architecture
+
+                         
+
+31. Core Technical Principle
+
+The central technical principle of Smart Calendar is:
+
+Convert unstructured event information into structured, user-approved calendar data.
+
+The system therefore follows:
+
+UNSTRUCTURED INFORMATION
+
+          ↓
+
+      Extraction
+
+          ↓
+
+      AI Analysis
+
+          ↓
+
+STRUCTURED EVENT DATA
+
+          ↓
+
+   User Confirmation
+
+          ↓
+
+  Conflict Detection
+
+          ↓
+
+       Calendar
+
+          ↓
+
+     Notifications
+
+This architecture keeps AI responsible for understanding information, while the backend remains responsible for validation, business logic, security, scheduling, and persistence.
