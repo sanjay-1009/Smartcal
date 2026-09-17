@@ -2,9 +2,9 @@
 FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
-# Copy pom.xml and source code from repository root
-COPY Backend/pom.xml ./pom.xml
-COPY Backend/src ./src
+# Copy pom.xml and source code
+COPY pom.xml ./pom.xml
+COPY src ./src
 
 # Package application jar
 RUN mvn clean package -DskipTests
