@@ -4,7 +4,7 @@ import { userService } from '../services/userService';
 import { BentoCard } from '../components/BentoCard';
 import { 
   User, 
-  Phone, 
+  Mail, 
   ShieldCheck, 
   CalendarDays, 
   Flame, 
@@ -66,7 +66,7 @@ export const ProfilePage = () => {
                 </div>
                 <div className="flex items-center gap-3 text-xs text-[#8C8563] mt-1">
                   <span className="flex items-center gap-1">
-                    <Phone className="w-3.5 h-3.5" />
+                    <Mail className="w-3.5 h-3.5" />
                     {user?.mobileNumber}
                   </span>
                   <span className="flex items-center gap-1 text-emerald-800 font-semibold">
@@ -91,7 +91,7 @@ export const ProfilePage = () => {
               <span className="text-[11px] font-bold text-[#8C8563] block uppercase tracking-wider">
                 Registration Status
               </span>
-              <p className="font-semibold mt-0.5">Mobile OTP Verified</p>
+              <p className="font-semibold mt-0.5">Email OTP Verified</p>
             </div>
             <div>
               <span className="text-[11px] font-bold text-[#8C8563] block uppercase tracking-wider">

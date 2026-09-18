@@ -5,7 +5,7 @@ import {
   Calendar, 
   Lock, 
   User, 
-  Phone, 
+  Mail, 
   ArrowRight, 
   Loader2, 
   AlertCircle, 
@@ -102,15 +102,15 @@ export const SignupPage = () => {
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-[#504B38] mb-1">
-              Email or Mobile Number (for OTP)
+              Gmail / Email Address (for OTP)
             </label>
             <div className="relative">
-              <Phone className="w-4 h-4 text-[#8C8563] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Mail className="w-4 h-4 text-[#8C8563] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
-                type="text"
+                type="email"
                 name="mobileNumber"
                 required
-                placeholder="you@gmail.com or +91 9876543210"
+                placeholder="you@gmail.com"
                 value={formData.mobileNumber}
                 onChange={handleChange}
                 className="glass-input w-full pl-10 text-xs sm:text-sm"

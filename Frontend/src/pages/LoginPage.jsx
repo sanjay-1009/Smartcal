@@ -83,14 +83,14 @@ export const LoginPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-[#504B38] mb-1.5">
-              Username or Mobile Number
+              Username or Email Address
             </label>
             <div className="relative">
               <User className="w-4 h-4 text-[#8C8563] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 required
-                placeholder="e.g. alexander or 9876543210"
+                placeholder="e.g. alexander or you@gmail.com"
                 value={usernameOrPhone}
                 onChange={(e) => setUsernameOrPhone(e.target.value)}
                 className="glass-input w-full pl-10 text-xs sm:text-sm"

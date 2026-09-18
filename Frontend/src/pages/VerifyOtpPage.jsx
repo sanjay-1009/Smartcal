@@ -76,9 +76,9 @@ export const VerifyOtpPage = () => {
           <div className="w-12 h-12 rounded-2xl bg-[#504B38] text-[#F8F3D9] flex items-center justify-center mx-auto mb-3 shadow-lg shadow-[#504B38]/20">
             <KeyRound className="w-6 h-6 text-[#EBE5C2]" />
           </div>
-          <h1 className="text-2xl font-extrabold text-[#504B38] tracking-tight">Verify Mobile OTP</h1>
+          <h1 className="text-2xl font-extrabold text-[#504B38] tracking-tight">Verify Email OTP</h1>
           <p className="text-xs text-[#8C8563] font-semibold mt-1">
-            Enter the 6-digit verification code sent to your registered number
+            Enter the 6-digit verification code sent to your email inbox
           </p>
         </div>
 
@@ -99,12 +99,12 @@ export const VerifyOtpPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-[#504B38] mb-1.5">
-              Username or Mobile Number
+              Username or Email Address
             </label>
             <input
               type="text"
               required
-              placeholder="Username or Phone"
+              placeholder="e.g. alexander or you@gmail.com"
               value={usernameOrPhone}
               onChange={(e) => setUsernameOrPhone(e.target.value)}
               className="glass-input w-full text-xs sm:text-sm"
