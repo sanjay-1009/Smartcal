@@ -101,6 +101,7 @@ public class EmailService {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("accept", "application/json");
             headers.set("api-key", brevoApiKey.trim());
 
             Map<String, Object> senderMap = Map.of("name", "SmartCal AI", "email", brevoSenderEmail.trim());
@@ -119,6 +120,8 @@ public class EmailService {
                 log.info("Brevo HTTPS email successfully sent to {}", toEmail);
                 return true;
             }
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            log.error("Brevo API error {}: {}", e.getStatusCode(), e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Failed to send via Brevo API: {}", e.getMessage());
         }
